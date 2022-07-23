@@ -74,8 +74,17 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  const start = Date.parse(new Date(startDate).toISOString());
+  const end = Date.parse(new Date(endDate).toISOString());
+  const digit = (end - start) / (1000);
+
+  const hours = (Math.trunc(digit / 3600)).toString().padStart(2, 0);
+  const minuts = (Math.trunc((digit % 3600) / 60)).toString().padStart(2, 0);
+  const seconds = (Math.trunc(digit % 60)).toString().padStart(2, 0);
+  const ms = (Math.trunc((digit % 1) * 1000)).toString().padStart(3, 0);
+
+  return `${hours}:${minuts}:${seconds}.${ms}`;
 }
 
 
@@ -95,8 +104,17 @@ function timeSpanToString(/* startDate, endDate */) {
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  const time = new Date(date);
+  const share = time.getUTCMinutes() * 0.5;
+  const hours = ((time.getUTCHours()) >= 12)
+    ? Math.abs(12 - (time.getUTCHours())) * 6 * 5 + share
+    : (time.getUTCHours()) * 6 * 5 + share;
+  const minuts = time.getUTCMinutes() * 6;
+  const corner = (Math.abs(hours - minuts) > 180)
+    ? Math.abs(hours - minuts) % 180
+    : Math.abs(hours - minuts);
+  return (corner * Math.PI) / 180;
 }
 
 
